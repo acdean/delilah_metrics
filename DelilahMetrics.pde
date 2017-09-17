@@ -31,11 +31,10 @@ void draw() {
   background(255);
   
   // axes
-  stroke(0);
   strokeWeight(3);
-  line2(0, 0, x_size, 0, x_size, l_max);
-  line2(0, 0, 0, l_max, x_size, l_max);
-  strokeWeight(1);
+  stroke(0);
+  drawAxis("RIGHT", #ff8000, x_size, r_max);
+  drawAxis("LEFT", #0000ff, x_size, l_max);
   dataset1.drawXAxis(x_size);
 
   // data
@@ -117,6 +116,9 @@ class Dataset {
     String[] list = points.keySet().toArray(new String[0]);
     stroke(0);
     fill(0);
+    strokeWeight(3);
+    line2(0, 0, size(), 0, size(), max);
+    strokeWeight(1);
     textFont(labelFont);
     for (int i = 0 ; i < size() ; i++) {
       float x = mapX(i, max);
@@ -165,4 +167,22 @@ void saveCsv() {
   }
   
   saveTable(table, "delilah.csv");
+}
+
+void drawAxis(String orientation, color colour, float size, float max) {
+  float i, x;
+  if (orientation.equals("LEFT")) {
+    i = 0;
+    x = mapX(i, size) - 40;
+  } else {
+    i = size;
+    x = mapX(i, size) + 10;
+  }
+  stroke(colour);
+  fill(colour);
+  line2(i, 0, i, max, size, max);
+  textFont(labelFont);
+  for (int f = 0 ; f < max + 1 ; f += .1 * max) {
+    text(f, x, mapY((float)f, max));
+  }
 }
