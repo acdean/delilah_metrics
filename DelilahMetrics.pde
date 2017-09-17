@@ -17,9 +17,9 @@ PFont labelFont;
 
 void setup() {
   size(1000, 800);
-  dataset1 = new Dataset("input1.json");
-  dataset2 = new Dataset("input2.json");
-  dataset3 = new Dataset("input3.json", dataset2);  // additive
+  dataset1 = new Dataset("input1.json");  // delilah_queue
+  dataset2 = new Dataset("input2.json");  // gti_internal
+  dataset3 = new Dataset("input3.json", dataset2);  // gti_all additive
   x_size = dataset1.size();
   l_max = 100; //dataset.max;
   r_max = 1000;
@@ -46,6 +46,7 @@ void draw() {
   String filename = "delilah_metrics_" + year() + nf(month(), 2) + nf(day(), 2) + ".png";
   println(filename);
   save(filename);
+  saveCsv();
 }
 
 float mapX(float x, float max) {
@@ -98,6 +99,10 @@ class Dataset {
     return max;
   }
 
+  float get(String key) {
+    return points.get(key);
+  }
+
   void draw(color colour, float max) {
     stroke(colour);
     strokeWeight(5);
@@ -135,4 +140,29 @@ void line2(float x0, float y0, float x1, float y1, float size, float max) {
   float x10 = mapX(x1, size);
   float y10 = mapY(y1, max);
   line(x00, y00, x10, y10);
+}
+
+void saveCsv() {
+  // keys
+  String[] keys = dataset1.points.keySet().toArray(new String[0]);
+  Table table = new Table();
+  String NAME1 = "time";
+  String NAME2 = "defrost";
+  String NAME3 = "elemental";
+  String NAME4 = "gti_combined";
+  
+  table.addColumn(NAME1);
+  table.addColumn(NAME2);
+  table.addColumn(NAME3);
+  table.addColumn(NAME4);
+
+  for (int i = 0 ; i < dataset1.size() ; i++) {
+    TableRow newRow = table.addRow();
+    newRow.setString(NAME1, keys[i]);
+    newRow.setFloat(NAME2, dataset1.get(keys[i]));
+    newRow.setFloat(NAME3, dataset2.get(keys[i]));
+    newRow.setFloat(NAME4, dataset3.get(keys[i]));
+  }
+  
+  saveTable(table, "delilah.csv");
 }
